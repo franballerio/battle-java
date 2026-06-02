@@ -1,11 +1,11 @@
 package services;
 
-import exceptions.ManaInsuffisantException;
-import exceptions.PotionIndisponibleException;
-import personnages.*;
+import exceptions.InsufficientManaException;
+import exceptions.UnavailablePotionException;
+import characters.*;
 import java.util.Random;
 import java.util.Scanner;
-import exceptions.ChoixInvalideException;
+import exceptions.InvalidChoiceException;
 
 
 public class CombatManager {
@@ -15,120 +15,120 @@ public class CombatManager {
         this.scanner = scanner;
     }
 
-    // Lancer le combat (Pour chaque tour)
-    public boolean lancerCombat(Hero hero) {
-        Ennemi ennemi = genererEnnemiAleatoire();
+    // Start combat (For each turn)
+    public boolean startCombat(Hero hero) {
+        Enemy enemy = generateRandomEnemy();
 
         String emoji = "";
-        switch (ennemi.getNom()) {
+        switch (enemy.getName()) {
             case "Troll":
                 emoji = "\uD83E\uDDCC"; // 🧌
                 break;
-            case "Gobelin":
+            case "Goblin":
                 emoji = "\uD83D\uDD77\uFE0F"; // 🕷️
                 break;
             case "Dragon":
                 emoji = "\uD83D\uDC09"; // 🐉
                 break;
             default:
-                emoji = "\u2753"; // ❓ inconnu
+                emoji = "\u2753"; // ❓ unknown
         }
 
-        System.out.println("\n " + emoji + " Un " + ennemi.getNom() + " apparaît !");
+        System.out.println("\n " + emoji + " A " + enemy.getName() + " appears!");
 
-        // Ajout d'une temporisation
+        // Add a delay
         try {
-            Thread.sleep(3000); // pause de 0.5s
+            Thread.sleep(3000); // 3s pause
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
-        while (hero.estVivant() && ennemi.estVivant()) {
-            // 1 tour
-            afficherEtat(hero, ennemi);
-            // Ajout d'une temporisation
+        while (hero.isAlive() && enemy.isAlive()) {
+            // 1 turn
+            displayState(hero, enemy);
+            // Add a delay
             try {
-                Thread.sleep(1000); // pause de 0.5s
+                Thread.sleep(1000); // 1s pause
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
-            afficherChoix();
-            int choix = scanner.nextInt();
+            displayChoices();
+            int choice = scanner.nextInt();
             scanner.nextLine();
             try {
-                executerChoix(choix, hero, ennemi);
-            } catch (ChoixInvalideException e) {
-                System.out.println("❌ Erreur : " + e.getMessage());
+                executeChoice(choice, hero, enemy);
+            } catch (InvalidChoiceException e) {
+                System.out.println("\u274C Error: " + e.getMessage());
             }
 
-            // Ajout d'une temporisation
+            // Add a delay
             try {
-                Thread.sleep(500); // pause de 0.5s
+                Thread.sleep(500); // 0.5s pause
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-        return hero.estVivant();
+        return hero.isAlive();
     }
 
 
-    // Génération d’un ennemi aléatoire
-    private Ennemi genererEnnemiAleatoire() {
+    // Generate a random enemy
+    private Enemy generateRandomEnemy() {
         Random rand = new Random();
-        int tirage = rand.nextInt(3) + 1;
-        switch (tirage) {
-            case 1: return new Gobelin();
+        int pick = rand.nextInt(3) + 1;
+        switch (pick) {
+            case 1: return new Goblin();
             case 2: return new Troll();
             case 3: return new Dragon();
-            default: return new Gobelin();
+            default: return new Goblin();
         }
     }
 
-    // Afficher état hero et ennemi
-    private void afficherEtat(Hero hero, Ennemi ennemi) {
-        System.out.println("\n--- État actuel ---");
+    // Display hero and enemy state
+    private void displayState(Hero hero, Enemy enemy) {
+        System.out.println("\n--- Current State ---");
         System.out.println(hero);
-        System.out.println(ennemi);
+        System.out.println(enemy);
     }
 
-    // Afficher console de choix
-    public void afficherChoix() {
-        System.out.println("Que souhaites-tu faire ?");
-        System.out.println("1. ⚔\uFE0F Attaquer");
-        System.out.println("2. \uD83D\uDD25 Utiliser le mana");
-        System.out.println("3. \uD83E\uDDEA Utiliser une potion de guérison");
-        System.out.println("4. Afficher tes paramètres");
-        System.out.println("Rentre le numéro de ton choix : ");
+    // Display choice menu
+    public void displayChoices() {
+        System.out.println("What would you like to do?");
+        System.out.println("1. \u2694\uFE0F Attack");
+        System.out.println("2. \uD83D\uDD25 Use mana");
+        System.out.println("3. \uD83E\uDDEA Use a healing potion");
+        System.out.println("4. Display your stats");
+        System.out.println("Enter the number of your choice: ");
     }
 
-        // Appliquer le choix
-    public void executerChoix(int choix, Hero hero, Ennemi ennemi) throws ChoixInvalideException {
+        // Apply the choice
+    public void executeChoice(int choice, Hero hero, Enemy enemy) throws InvalidChoiceException {
         try {
-            switch (choix) {
+            switch (choice) {
                 case 1:
-                    hero.attaquer(ennemi);
-                    if (ennemi.estVivant()) {
-                        ennemi.attaquer(hero);
+                    hero.attack(enemy);
+                    if (enemy.isAlive()) {
+                        enemy.attack(hero);
                     }
                     break;
                 case 2:
-                    hero.utiliserPouvoir(ennemi);
-                    if (ennemi.estVivant()) {
-                        ennemi.attaquer(hero);
+                    hero.usePower(enemy);
+                    if (enemy.isAlive()) {
+                        enemy.attack(hero);
                     }
                     break;
                 case 3:
-                    hero.utiliserPotion();
+                    hero.usePotion();
                     break;
                 case 4:
                     System.out.println(hero);
                     break;
                 default:
-                    throw new ChoixInvalideException("Choix invalide durant le combat. Rentre l'un des nombres donnés.");
+                    throw new InvalidChoiceException("Invalid choice during combat. Enter one of the given numbers.");
             }
-        } catch (ManaInsuffisantException | PotionIndisponibleException e) {
-            System.out.println("❌ " + e.getMessage());
+        } catch (InsufficientManaException | UnavailablePotionException e) {
+            System.out.println("\u274C " + e.getMessage());
         }
     }
 

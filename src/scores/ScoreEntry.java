@@ -5,51 +5,51 @@ import java.time.format.DateTimeFormatter;
 
 public class ScoreEntry {
     private LocalDateTime date;
-    private String nom;
-    private int ennemisVaincus;
+    private String name;
+    private int enemiesDefeated;
 
-    public ScoreEntry(LocalDateTime date, String nom, int ennemisVaincus) {
+    public ScoreEntry(LocalDateTime date, String name, int enemiesDefeated) {
         this.date = date;
-        this.nom = nom;
-        this.ennemisVaincus = ennemisVaincus;
+        this.name = name;
+        this.enemiesDefeated = enemiesDefeated;
     }
 
-    public int getEnnemisVaincus() {
-        return ennemisVaincus;
+    public int getEnemiesDefeated() {
+        return enemiesDefeated;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
     public LocalDateTime getDate() {
         return date;
     }
 
-    public static ScoreEntry fromFormattedString(String ligne) {
+    public static ScoreEntry fromFormattedString(String line) {
         try {
-            String datePart = ligne.substring(0, 20).trim();
-            String nomPart = ligne.substring(20, 35).trim();
-            String scorePart = ligne.replaceAll(".*?(\\d+) ennemis vaincus", "$1");
+            String datePart = line.substring(0, 20).trim();
+            String namePart = line.substring(20, 35).trim();
+            String scorePart = line.replaceAll(".*?(\\d+) enemies defeated", "$1");
 
-            // Parse format "dd/MM/yyyy à HH'h'mm"
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH'h'mm");
+            // Parse format "dd/MM/yyyy at HH'h'mm"
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at' HH'h'mm");
             LocalDateTime date = LocalDateTime.parse(datePart, formatter);
 
             int score = Integer.parseInt(scorePart);
-            return new ScoreEntry(date, nomPart, score);
+            return new ScoreEntry(date, namePart, score);
 
         } catch (Exception e) {
-            System.out.println("❌ Ligne invalide : " + ligne);
+            System.out.println("\u274C Invalid line: " + line);
             return null;
         }
     }
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH'h'mm");
-        String dateFormattee = date.format(formatter);
-        return String.format("%-20s %-15s %d ennemis vaincus", dateFormattee, nom, ennemisVaincus);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at' HH'h'mm");
+        String formattedDate = date.format(formatter);
+        return String.format("%-20s %-15s %d enemies defeated", formattedDate, name, enemiesDefeated);
     }
 
 }

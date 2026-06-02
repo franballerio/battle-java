@@ -12,29 +12,29 @@ import java.util.Objects;
 
 public class ScoreManager {
     private List<ScoreEntry> scores = new ArrayList<>();
-    private static final String FICHIER_SCORES = "scores.txt";
+    private static final String SCORES_FILE = "scores.txt";
 
-    // Enregistrement du score dans fichier txt
-    public void enregistrerScore(String nom, int ennemisVaincus) {
-        ScoreEntry entry = new ScoreEntry(LocalDateTime.now(), nom, ennemisVaincus);
+    // Save score to a text file
+    public void saveScore(String name, int enemiesDefeated) {
+        ScoreEntry entry = new ScoreEntry(LocalDateTime.now(), name, enemiesDefeated);
         scores.add(entry);
 
-        try (FileWriter writer = new FileWriter(FICHIER_SCORES, true)) {
+        try (FileWriter writer = new FileWriter(SCORES_FILE, true)) {
             writer.write(entry.toString() + "\n");
-            System.out.println("✅ Score sauvegardé.");
+            System.out.println("\u2705 Score saved.");
         } catch (IOException e) {
-            System.out.println("❌ Erreur lors de l'enregistrement du score.");
+            System.out.println("\u274C Error while saving the score.");
         }
     }
 
-    public void afficherLeaderboard() {
+    public void displayLeaderboard() {
         System.out.println("===== LEADERBOARD =====");
         try {
-            List<String> lignes = Files.readAllLines(Paths.get(FICHIER_SCORES));
-            List<ScoreEntry> scores = lignes.stream()
+            List<String> lines = Files.readAllLines(Paths.get(SCORES_FILE));
+            List<ScoreEntry> scores = lines.stream()
                     .map(ScoreEntry::fromFormattedString)
                     .filter(Objects::nonNull)
-                    .sorted(Comparator.comparingInt(ScoreEntry::getEnnemisVaincus).reversed())
+                    .sorted(Comparator.comparingInt(ScoreEntry::getEnemiesDefeated).reversed())
                     .limit(5)
                     .toList();
 
@@ -43,7 +43,7 @@ public class ScoreManager {
             }
 
         } catch (IOException e) {
-            System.out.println("❌ Impossible de lire les scores.");
+            System.out.println("\u274C Unable to read scores.");
         }
         System.out.println("==================");
     }

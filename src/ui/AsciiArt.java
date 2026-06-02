@@ -2,7 +2,7 @@ package ui;
 
 public class AsciiArt {
 
-    public static void afficherHeroDragon() {
+    public static void displayHeroDragon() {
         System.out.println("""
               /\\            / \\  //\\
              /__\\      |\\___/|      \\
@@ -16,7 +16,7 @@ public class AsciiArt {
 
     }
 
-    public static void afficherGobelin() {
+    public static void displayGoblin() {
         System.out.println("""
             .----.
            /      \\
@@ -27,7 +27,7 @@ public class AsciiArt {
 
     }
 
-    public static void afficherDragon() {
+    public static void displayDragon() {
         System.out.println("""
                / \\  //\\
           |\\___/|      \\

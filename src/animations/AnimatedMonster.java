@@ -1,6 +1,6 @@
 package animations;
 
-public class MonstreAnime {
+public class AnimatedMonster {
     private final String[] frames = {
             """
            (o_o)
@@ -24,9 +24,9 @@ public class MonstreAnime {
         """
     };
 
-    public void afficher() throws InterruptedException {
+    public void display() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
-            System.out.print("\033[H\033[2J"); // Nettoie la console
+            System.out.print("\033[H\033[2J"); // Clear console
             System.out.flush();
 
             System.out.println(frames[i % frames.length]);
@@ -34,4 +34,3 @@ public class MonstreAnime {
         }
     }
 }
-
